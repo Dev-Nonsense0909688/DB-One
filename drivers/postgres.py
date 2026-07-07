@@ -57,9 +57,7 @@ class PostgresDBHandler:
             """
             SELECT
                 column_name,
-                data_type,
-                is_nullable,
-                column_default
+                data_type
             FROM information_schema.columns
             WHERE table_schema = %s
             AND table_name = %s
@@ -67,16 +65,16 @@ class PostgresDBHandler:
         """,
             (schema, table),
         ) # getting columns of a specific table from a specific table.
-        return [r[0] for r in cursor.fetchall()]
+        return [(r[0], r[1].upper()) for r in cursor.fetchall()]
 
     def get_table_content(self, schema: str, table: str, cursor: psycopg.Cursor = conn()):
 
         cursor.execute(f"SELECT * FROM \"{schema}\".\"{table}\";") # Getting all rows and columns from the specifc table.
 
         rows = cursor.fetchall()
-        columns = [d.name for d in cursor.description]
+        columns = [(d.name, d.type_code) for d in cursor.description]
 
-        return {"columns": columns, "rows": None if rows == [] else rows}
+        return {"columns": self.get_columns(schema,  table, cursor), "rows": None if rows == [] else rows}
 
     @property
     def __tree__(self):
@@ -89,7 +87,6 @@ class PostgresDBHandler:
 
             with conn(db) as cursor:
                 schemas = self.get_schemas(cursor)
-
                 for schema in schemas:
                     tree[db][schema] = self.get_tables(schema, cursor)
 

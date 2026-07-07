@@ -1,2 +1,2 @@
 HOST = "localhost"
-PASSWORD = "anish"
+PASSWORD = "YOURPASSWORD"

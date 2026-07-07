@@ -9,7 +9,7 @@ function renderTree(tree) {
             <div class="item folder" onclick="set_current('${db}')">
                 <i class="bi bi-caret-down-fill arrow"></i>
                 ${db}
-                <i class="bi bi-database"></i>
+                <i class="bi bi-database"></i>       
             </div>
         `;
 
@@ -95,6 +95,9 @@ function attachTableListeners() {
   });
 }
 
+function set_current(db) {
+  document.getElementById("selected").innerText = db;
+}
 
 setTimeout(async () => {
   const req = await fetch("/api/tree");
@@ -104,3 +107,5 @@ setTimeout(async () => {
   attachFolderListeners();
   attachTableListeners();
 }, 300);
+
+
